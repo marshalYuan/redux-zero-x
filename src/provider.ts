@@ -13,12 +13,11 @@ export default class Provider extends React.Component<any, {}> {
   }
   getChildContext() {
     if (Array.isArray(this.props.store)) {
-        return { stores: this.props.store }
+      return { stores: this.props.store }
     }
     const stores = {}
     for (let key in this.props) {
-        if (!specialReactKeys[key])
-            stores[key] = this.props[key]
+      if (!specialReactKeys[key]) stores[key] = this.props[key]
     }
     return { stores }
   }

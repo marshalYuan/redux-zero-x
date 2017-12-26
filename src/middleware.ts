@@ -12,7 +12,8 @@ const logger: IMiddleware = function(action, next) {
 
 export function compose(middlewares: IMiddleware[]) {
   for (const fn of middlewares) {
-    if (!isFunction(fn)) throw new TypeError("All Middlewares must be composed of functions!")
+    if (!isFunction(fn))
+      throw new TypeError("All Middlewares must be composed of functions!")
   }
   return (action, next?: Function) => {
     let index = -1

@@ -28,7 +28,9 @@ class Connect extends React.Component<P, any> {
   getStores() {
     const { stores } = this.props
     if (!stores) {
-      return Array.isArray(this.context.stores) ? this.context.stores : Object.keys(this.context.stores).map(key => this.context.stores[key])
+      return Array.isArray(this.context.stores)
+        ? this.context.stores
+        : Object.keys(this.context.stores).map(key => this.context.stores[key])
     }
     return stores.map(key => {
       if (!(key in this.context.stores)) {
@@ -64,7 +66,7 @@ const defaultMapStateToProps = (...args) => {
   const states = args.slice(0, -1)
   let target = {}
   for (const state of states) {
-    target = {...target, ...state}
+    target = { ...target, ...state }
   }
   return target
 }
@@ -72,20 +74,30 @@ const defaultMapStateToProps = (...args) => {
 const defaultMapActionToProps = defaultMapStateToProps
 
 export default function connect(): any
-export default function connect(mapStateToProps, mapActionToProps?: Function): any
-export default function connect(stores: string[], mapStateToProps?: Function, mapActionToProps?: Function): any
 export default function connect(
-  arg0?: string[] | Function,
-  arg1?,
-  arg2?
-) {
+  mapStateToProps,
+  mapActionToProps?: Function
+): any
+export default function connect(
+  stores: string[],
+  mapStateToProps?: Function,
+  mapActionToProps?: Function
+): any
+export default function connect(arg0?: string[] | Function, arg1?, arg2?) {
   let [stores, mapStateToProps, mapActionToProps] = [
-      Array.isArray(arg0) && arg0 ,
-      isFunction(arg0) ? arg0 : arg1 || defaultMapStateToProps,
-      isFunction(arg0) ? arg1 || defaultMapActionToProps : arg2 || defaultMapActionToProps
+    Array.isArray(arg0) && arg0,
+    isFunction(arg0) ? arg0 : arg1 || defaultMapStateToProps,
+    isFunction(arg0)
+      ? arg1 || defaultMapActionToProps
+      : arg2 || defaultMapActionToProps
   ]
   return Child => props => (
-    <Connect {...props} stores={stores} mapStateToProps={mapStateToProps} mapActionToProps={mapActionToProps} >
+    <Connect
+      {...props}
+      stores={stores}
+      mapStateToProps={mapStateToProps}
+      mapActionToProps={mapActionToProps}
+    >
       {mappedProps => <Child {...mappedProps} {...props} />}
     </Connect>
   )
