@@ -24,7 +24,7 @@ function getActions(store: IStore) {
       let action = store[propertyKey]
       let meta = getMeta(action)
       meta.store = store
-      let name = meta.name || propertyKey
+      let name = meta.name || (meta.name = propertyKey)
       let hasMiddleware = isFunction(store.middleware)
       actions[name] = (...args) => {
         if (meta.pure === false) args = [store.getState(), ...args]
@@ -34,11 +34,12 @@ function getActions(store: IStore) {
             )
           : set(store, store[propertyKey](...args))
       }
+      setMeta(actions[name], meta)
       return actions
     }, {})
 }
 
-export const action = meta => (target, propertyKey, descriptor) => {
+export const action = (meta?: string | object) => (target, propertyKey, descriptor) => {
   if (!isFunction(descriptor.value)) {
     throw new TypeError("action decorator only decorate function member")
   }
@@ -66,6 +67,7 @@ export class Store implements IStore {
       Store.middlewares.length || middlewares.length
         ? compose([...Store.middlewares, ...middlewares])
         : null
+    this.setState = this.setState.bind(this)
   }
 
   getState() {

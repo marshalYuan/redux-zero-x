@@ -44,11 +44,11 @@ export function derive(store, state = {}, keys) {
 const META = "@@meta"
 const ACTIONS = "@@actions"
 
-export const getMeta = target => target[META]
+export const getMeta = target => target[META] || {}
 
 export const setMeta = (target, meta) => (target[META] = meta)
 
-export const getActionNames = target => target[ACTIONS]
+export const getActionNames = target => target[ACTIONS] || []
 
 export const addOrCreateActions = (target, propertyKey) =>
   target[ACTIONS]
@@ -57,7 +57,7 @@ export const addOrCreateActions = (target, propertyKey) =>
 
 export const isFunction = obj => typeof obj === "function"
 
-export const isInherit = (A, B) => A === B || typeof A.prototype === B
+export const isInherit = (Child, Parent) => Child === Parent || Child.prototype instanceof Parent
 
 export function set(store: IStore, ret) {
   if (ret != null) {
@@ -71,14 +71,14 @@ export function propsValidation(
   propName: string,
   componentName: string
 ) {
-  if (Array.isArray(props[propName])) {
-    for (const s of props[propName]) {
-      if (s instanceof Store) {
-        break
+  if (props[propName]) {
+    for (const key in props[propName]) {
+      if (props[propName][key] instanceof Store) {
+        continue
       }
-      return new Error(`${s} is not an instance of Store`)
+      return new Error(`stores.${key} is not an instance of Store`)
     }
-  } else {
-    return new Error(`Invalid prop ${propName} supplied to ${componentName}`)
+    return
   }
+  return new Error(`Invalid prop ${propName} supplied to ${componentName}`)
 }

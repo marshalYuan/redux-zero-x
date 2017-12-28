@@ -6,10 +6,6 @@ export interface IMiddleware {
   (action: Function, next: Function): void
 }
 
-const logger: IMiddleware = function(action, next) {
-  return next()
-}
-
 export function compose(middlewares: IMiddleware[]) {
   for (const fn of middlewares) {
     if (!isFunction(fn))

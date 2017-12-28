@@ -1,10 +1,6 @@
 import * as React from "react"
 import { propsValidation } from "./utils"
 
-// import Props from "../../interfaces/Props"
-// import Store from "../../interfaces/Store"
-// import propValidation from "../../utils/propsValidation"
-
 const specialReactKeys = { children: true, key: true, ref: true }
 
 export default class Provider extends React.Component<any, {}> {
@@ -12,8 +8,8 @@ export default class Provider extends React.Component<any, {}> {
     stores: propsValidation
   }
   getChildContext() {
-    if (Array.isArray(this.props.store)) {
-      return { stores: this.props.store }
+    if (this.props.store) {
+      return { stores: Array.isArray(this.props.store) ? this.props.store : [this.props.store] }
     }
     const stores = {}
     for (let key in this.props) {
