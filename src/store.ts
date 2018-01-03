@@ -39,7 +39,7 @@ function getActions(store: IStore) {
     }, {})
 }
 
-export const action = (meta?: string | object) => (target, propertyKey, descriptor) => {
+const actionDecorator = meta => (target, propertyKey, descriptor) => {
   if (!isFunction(descriptor.value)) {
     throw new TypeError("action decorator only decorate function member")
   }
@@ -52,6 +52,15 @@ export const action = (meta?: string | object) => (target, propertyKey, descript
   }
   setMeta(descriptor.value, meta)
   return descriptor
+}
+
+export function action(arg1?, arg2?, arg3?) {
+  if (arguments.length === 3) {
+    return actionDecorator({})(arg1, arg2, arg3)
+  } else {
+    const meta = arg1
+    return actionDecorator(meta)
+  }
 }
 
 export class Store implements IStore {

@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import ReactDOM from 'react-dom'
 
-import { Provider, connect, Store, action } from 'redux-zero-x'
+import { Provider, connect, Store, action, getMeta } from 'redux-zero-x'
 
 async function delay(t) {
     return new Promise((res, rej) => setTimeout(res, t))
@@ -9,11 +9,12 @@ async function delay(t) {
 
 Store.use(
     async (action, next) => {
-        console.group( action['@@meta'].name)
+        const {name} = getMeta(action)
+        console.group(name)
         console.log('middle1start')
         console.log('next1', await next())
         console.log('middle1end')
-        console.groupEnd( action['@@meta'].name)
+        console.groupEnd(name)
     },
     async (action, next) => {
         console.log('middle2start')
