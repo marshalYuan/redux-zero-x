@@ -26,8 +26,9 @@ export class TodoStore extends Store {
     }
 
     @action
-    toggleAll (checked) {
-        const todos = this.getState().todos.map(todo => todo.completed = checked)
+    toggleAll () {
+        const areAllMarked = this.getState().todos.every(todo => todo.completed)
+        const todos = this.getState().todos.map(todo => ({...todo, completed: !areAllMarked}))
         return {todos}
     }
     
