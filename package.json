@@ -1,7 +1,11 @@
 {
   "name": "redux-zero-x",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A lightweight state container inspired by redux-zero and make usage like mobx",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marshalYuan/redux-zero-x.git"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
