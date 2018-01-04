@@ -12,12 +12,12 @@
 
 ## installation
 
-`npm install @dwd/redux-zero-x`
+`npm install redux-zero-x`
 
 ## how
 
 ```js
-import {Provider, connect, Store, action} from '@dwd/redux-zero-x'
+import {Provider, connect, Store, action} from 'redux-zero-x'
 
 class CounterStore extends Store {
     @action()
