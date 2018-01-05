@@ -129,6 +129,6 @@ export class Store implements IStore {
 }
 
 
-export function createSrore(initState = {}, ...middlewares) {
+export function createStore(initState = {}, ...middlewares) {
   return new Store(initState, ...middlewares)
 }

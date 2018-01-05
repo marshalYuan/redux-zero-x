@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "parcel --port 3100 index.html"
+    "start": "parcel --port 3100 index.html",
+    "build": "parcel build index.html --public-url ./"
   },
   "engines": {
     "node" : ">=8.0.0"

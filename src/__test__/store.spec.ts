@@ -1,4 +1,4 @@
-import { Store, action, createSrore } from "../store"
+import { Store, action, createStore } from "../store"
 import { getMeta } from "../utils"
 
 class MyStore extends Store {
@@ -81,7 +81,7 @@ describe("store", () => {
 
 describe("createStore", () => {
     it("createStore by createStore", () => {
-        let s = createSrore({count: 1}).actions((self) => ({
+        let s = createStore({count: 1}).actions((self) => ({
             add(count) {
                 return {count: self.getState().count + count}
             },
