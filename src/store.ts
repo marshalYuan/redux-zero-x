@@ -70,7 +70,7 @@ export class Store implements IStore {
   }
   private listeners: Function[] = []
   public middleware
-  protected actions: any
+  protected _actions: any
   constructor(protected state: any = {}, ...middlewares) {
     this.middleware =
       Store.middlewares.length || middlewares.length
@@ -100,6 +100,35 @@ export class Store implements IStore {
   }
 
   getActions() {
-    return this.actions || (this.actions = getActions(this))
+    return this._actions || (this._actions = getActions(this))
   }
+
+  actions(creater) {
+    if (!isFunction(creater)) {
+      throw new TypeError(`actions expect a function, but get ${creater}`)
+    }
+    const actions = creater(this)
+
+    for (const key in actions) {
+      if (actions.hasOwnProperty(key)) {
+        const action = actions[key]
+        if (isFunction(action)) {
+          this[key] = action
+          addOrCreateActions(this, key)
+        } else if (isFunction(action.value)) {
+          setMeta(action.value, action.meta)
+          this[key] = action.value
+          addOrCreateActions(this, key)
+        } else {
+          console.warn(`${action} is an invalid action`)
+        }
+      }
+    }
+    return this
+  }
+}
+
+
+export function createSrore(initState = {}, ...middlewares) {
+  return new Store(initState, ...middlewares)
 }

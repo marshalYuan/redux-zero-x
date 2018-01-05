@@ -1,4 +1,4 @@
-import { Store, action } from "../store"
+import { Store, action, createSrore } from "../store"
 import { getMeta } from "../utils"
 
 class MyStore extends Store {
@@ -26,7 +26,7 @@ class MyStore extends Store {
 }
 
 describe("store", () => {
-    it("createStore", () => {
+    it("createStore by new", () => {
         let s = new Store({count: 1})
         expect(s.getState()).toEqual({count: 1})
     })
@@ -76,5 +76,31 @@ describe("store", () => {
         unsub()
         s.getActions().add(1)
         expect(cb).toHaveBeenCalledTimes(2)
+    })
+})
+
+describe("createStore", () => {
+    it("createStore by createStore", () => {
+        let s = createSrore({count: 1}).actions((self) => ({
+            add(count) {
+                return {count: self.getState().count + count}
+            },
+            sub: {
+                meta: {pure: false},
+                value: ({count}, num) => {
+                    return {count: count - num}
+                }
+            }
+        }))
+
+        expect(s.getState()).toEqual({count: 1})
+        let actions = s.getActions()
+        expect(actions).toHaveProperty("add")
+        expect(actions).toHaveProperty("sub")
+
+        actions.add(1)
+        expect(s.getState()).toEqual({count: 2})
+        actions.sub(1)
+        expect(s.getState()).toEqual({count: 1})
     })
 })

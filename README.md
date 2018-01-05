@@ -16,6 +16,7 @@
 
 ## how
 
+### use decorator
 ```js
 import {Provider, connect, Store, action} from 'redux-zero-x'
 
@@ -29,7 +30,7 @@ class CounterStore extends Store {
     decrement() {
         return {count: this.getState().count - 1}
     }
-
+    // if set pure with false, the first argument is store's current state
     @action({pure: false})
     mul({count}, times) {
         return {count: count * times}
@@ -53,6 +54,27 @@ const App = () => (
 );
 
 render(<App />, document.getElementById("root"));
+```
+
+### use createStore
+
+```js
+import {createStore} from 'redux-zero-x'
+
+const counterStore = createStore({count:1}).actions(self => ({
+    increment() {
+        return {count: self.getState().count + 1}
+    }
+
+    decrement() {
+        return {count: self.getState().count - 1}
+    }
+    
+    mul: {
+        meta: {pure: false},
+        value: ({count}, times) => ({count: count * times})
+    }
+}))
 ```
 
 ## examples
@@ -90,7 +112,7 @@ class myStore extends Store {
 ## middleware
 
 ```js
-import { getMeta, Store } from '@dwd/redux-zero-x'
+import { getMeta } from 'redux-zero-x'
 
 async function loggerMiddleware(action, next) {
     const meta = getMeta(action)
