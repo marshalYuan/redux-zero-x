@@ -7,10 +7,11 @@
 - [Installation](#installation)
 - [How](#how)
 - [Example](#examples)
+- [Action](#action)
 - [Async](#async)
 - [Middleware](#middleware)
 
-## installation
+## Installation
 
 `npm install redux-zero-x`
 
@@ -77,14 +78,38 @@ const counterStore = createStore({count:1}).actions(self => ({
 }))
 ```
 
-## examples
+## Examples
 
 in every example project's dirctory, run
 ```
 npm install && npm run start
 ```
 
-## async
+## Action
+
+In redux-zero-x, action is a function with some meta info and return update
+
+```js
+@action(meta)
+doSomething() {
+    // update is an object
+    return {foo:1}
+}
+```
+or
+```js
+@action(meta)
+doSomething() {
+    // update is an function
+    return (state) => update
+}
+```
+
+### Pure action
+
+By default, every action is pure. You can use `meta.pure = flase` to set action-function's first argument with current state, or use `Store.defaultConfig.pure = false` to make all actions be pure.
+
+## Async
 
 ```js
 async function getUserInfo(userId) {
@@ -109,7 +134,7 @@ class myStore extends Store {
 }
 ```
 
-## middleware
+## Middleware
 
 ```js
 import { getMeta } from 'redux-zero-x'
@@ -132,3 +157,7 @@ Store.use(loggerMiddleware, delayMiddleware)
 // store middlewares
 let store = new Store({count: 1}, loggerMiddleware, delayMiddleware)
 ```
+
+## Licence
+
+MIT
