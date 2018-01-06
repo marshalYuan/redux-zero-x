@@ -2,7 +2,7 @@ import { Store, action, createStore } from "../store"
 import { getMeta } from "../utils"
 
 class MyStore extends Store {
-    @action("add")
+    @action
     add(count) {
         return {count: this.getState().count + count}
     }

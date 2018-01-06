@@ -5,7 +5,7 @@
 ## Table of Contents
 
 - [Installation](#installation)
-- [How](#how)
+- [Usage](#usage)
 - [Example](#examples)
 - [Action](#action)
 - [Async](#async)
@@ -15,19 +15,19 @@
 
 `npm install redux-zero-x`
 
-## how
+## Usage
 
 ### use decorator
 ```js
 import {Provider, connect, Store, action} from 'redux-zero-x'
 
 class CounterStore extends Store {
-    @action()
+    @action({throttle: 1000})
     increment() {
         return {count: this.getState().count + 1}
     }
-
-    @action()
+    //no meta
+    @action
     decrement() {
         return {count: this.getState().count - 1}
     }
@@ -105,7 +105,28 @@ doSomething() {
 }
 ```
 
-### Pure action
+### meta info
+
+You can declare meta-info for action, and get it in [middleware](#middleware).
+
+```js
+import { getMeta } from 'redux-zero-x'
+
+let throttleMap = new Map()
+function throttleMiddleware(action, next) {
+    const meta = getMeta(action)
+    const {throttle} = meta
+    if(!throttle) return next()
+
+    const now = Date.now()
+    if(!throttleMap.has(action) || now - throttleMap.get(action) >= throttle) {
+        throttleMap.set(action, now)
+        return next()
+    }
+}
+```
+
+### pure action
 
 By default, every action is pure. You can use `meta.pure = flase` to set action-function's first argument with current state, or use `Store.defaultConfig.pure = false` to make all actions be pure.
 

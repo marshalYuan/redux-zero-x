@@ -7,6 +7,7 @@ async function delay(t) {
     return new Promise((res, rej) => setTimeout(res, t))
 }
 
+let throttleMap = new Map()
 Store.use(
     async (action, next) => {
         const {name} = getMeta(action)
@@ -16,12 +17,23 @@ Store.use(
         console.log('middle1end')
         console.groupEnd(name)
     },
-    async (action, next) => {
-        console.log('middle2start')
-        await delay(1000)
-        console.log('next2', await next())
-        console.log('middle2end')
+    function throttleMiddleware(action, next) {
+        const meta = getMeta(action)
+        const {throttle} = meta
+        if(!throttle) return next()
+    
+        const now = Date.now()
+        if(!throttleMap.has(action) || now - throttleMap.get(action) >= throttle) {
+            throttleMap.set(action, now)
+            return next()
+        }
     },
+    // async (action, next) => {
+    //     console.log('middle2start')
+    //     await delay(1000)
+    //     console.log('next2', await next())
+    //     console.log('middle2end')
+    // },
     async (action, next) => {
         console.log('middle3start')
         // await delay(1000)
@@ -31,7 +43,7 @@ Store.use(
 )
 
 class counter extends Store {
-    @action()
+    @action({throttle: 3000})
     increase() {
         return { count: this.getState().count + 1}
     }
