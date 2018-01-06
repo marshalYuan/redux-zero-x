@@ -4,7 +4,8 @@ import {
   setMeta,
   getMeta,
   getActionNames,
-  set
+  set,
+  isUndefined
 } from "./utils"
 
 import { compose } from "./middleware"
@@ -24,6 +25,7 @@ function getActions(store: IStore) {
       let action = store[propertyKey]
       let meta = getMeta(action)
       meta.store = store
+      meta.pure = isUndefined(meta.pure) ? Store.defaultConfig.pure : !!meta.pure
       let name = meta.name || (meta.name = propertyKey)
       let hasMiddleware = isFunction(store.middleware)
       actions[name] = (...args) => {
@@ -65,6 +67,9 @@ export function action(arg1?, arg2?, arg3?) {
 
 export class Store implements IStore {
   static middlewares: Function[] = []
+  static defaultConfig = {
+    pure: true
+  }
   static use(...middleware) {
     Store.middlewares.push(...middleware)
   }
