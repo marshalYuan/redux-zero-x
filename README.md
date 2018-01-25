@@ -179,6 +179,6 @@ Store.use(loggerMiddleware, delayMiddleware)
 let store = new Store({count: 1}, loggerMiddleware, delayMiddleware)
 ```
 
-## Licence
+## License
 
 MIT
