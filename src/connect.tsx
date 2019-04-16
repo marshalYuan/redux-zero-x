@@ -7,7 +7,7 @@ import { shallowEqual, isFunction, propsValidation } from "./utils"
 interface P {
   children: (...args) => any
   stores?: string[]
-  mapStateToProps?: () => Object
+  mapStateToProps?: any
   mapActionToProps?: any
 }
 

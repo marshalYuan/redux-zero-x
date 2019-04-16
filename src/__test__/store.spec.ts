@@ -1,7 +1,8 @@
 import { Store, action, createStore } from "../store"
+import { Actions } from "../types"
 import { getMeta } from "../utils"
 
-class MyStore extends Store {
+class MyStore extends Store<{count: number}> {
     @action
     add(count) {
         return {count: this.getState().count + count}
@@ -36,6 +37,13 @@ describe("store", () => {
         expect(s.getActions()).toHaveProperty("add")
         expect(s.getActions()).toHaveProperty("sub")
         expect(s.getActions() === s.getActions()).toBeTruthy()
+    })
+
+    it("getActions for typescript", () => {
+        let s = new MyStore({count: 0})
+        let actions = s.getActions() as Actions<typeof s>
+        expect(actions.add(1)).toBe(undefined)
+        expect(actions.mul(5)).toBe(undefined)
     })
 
     it("not-pure-action", () => {

@@ -18,7 +18,7 @@ describe("utils", () => {
     })
 
     it("set", async () => {
-        class MyStore extends Store {
+        class MyStore extends Store<{count: number}> {
             add(count) {
                 return {count: this.getState().count + count}
             }

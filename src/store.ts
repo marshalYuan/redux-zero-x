@@ -7,17 +7,20 @@ import {
   set,
   isUndefined
 } from "./utils"
+import { Actions } from "./types"
 
 import { compose } from "./middleware"
 
-export interface IStore {
+export interface IStore<S> {
   middleware: Function
   setState: Function
   subscribe: Function
   getState: Function
+  actions: (creater: any) => IStore<S>
+  getActions: () => any
 }
 
-function getActions(store: IStore) {
+function getActions<S>(store: IStore<S>) {
   let propertyKeys = getActionNames(store)
   return propertyKeys
     .filter(propertyKey => isFunction(store[propertyKey]))
@@ -65,7 +68,7 @@ export function action(arg1?, arg2?, arg3?) {
   }
 }
 
-export class Store implements IStore {
+export class Store<S = {}> implements IStore<S> {
   static middlewares: Function[] = []
   static defaultConfig = {
     pure: true
@@ -75,8 +78,10 @@ export class Store implements IStore {
   }
   private listeners: Function[] = []
   public middleware
-  protected _actions: any
-  constructor(protected state: any = {}, ...middlewares) {
+  protected _actions: Actions<this>
+  protected state: S
+  constructor(initialState?: S, ...middlewares) {
+    this.state = initialState || {} as S
     this.middleware =
       Store.middlewares.length || middlewares.length
         ? compose([...Store.middlewares, ...middlewares])
@@ -108,7 +113,7 @@ export class Store implements IStore {
     return this._actions || (this._actions = getActions(this))
   }
 
-  actions(creater) {
+  actions(creater: (self: this) => any) {
     if (!isFunction(creater)) {
       throw new TypeError(`actions expect a function, but get ${creater}`)
     }
@@ -134,6 +139,6 @@ export class Store implements IStore {
 }
 
 
-export function createStore(initState = {}, ...middlewares) {
-  return new Store(initState, ...middlewares)
+export function createStore<S>(initState?: S, ...middlewares) {
+  return new Store<S>(initState, ...middlewares)
 }

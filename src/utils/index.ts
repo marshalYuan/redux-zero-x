@@ -61,7 +61,7 @@ export const isInherit = (Child, Parent) => Child === Parent || Child.prototype 
 
 export const isUndefined = obj => typeof obj === "undefined"
 
-export function set(store: IStore, ret) {
+export function set(store: IStore<any>, ret) {
   if (ret != null) {
     if (ret.then) return ret.then(store.setState)
     store.setState(ret)
