@@ -1,6 +1,6 @@
 {
   "name": "redux-zero-x",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "A lightweight state container inspired by redux-zero and make usage like mobx",
   "repository": {
     "type": "git",
