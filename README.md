@@ -10,6 +10,7 @@
 - [Action](#action)
 - [Async](#async)
 - [Middleware](#middleware)
+- [Typescript](#typescript)
 
 ## Installation
 
@@ -130,6 +131,22 @@ function throttleMiddleware(action, next) {
 
 By default, every action is pure. You can use `meta.pure = flase` to set action-function's first argument with current state, or use `Store.defaultConfig.pure = false` to make all actions be pure.
 
+### fake action
+
+If you want add some method which is state-free. You can add meta `{fake: true}` to the action decorator.
+
+> you can't use store's all methods in fake action
+
+```js
+@action({fake: true})
+doSomethingWithReturnValue() {
+    return "welcome"
+}
+
+// you can get return value from fake actions
+let message = s.doSomethingWithReturnValue()
+```
+
 ## Async
 
 ```js
@@ -178,6 +195,52 @@ Store.use(loggerMiddleware, delayMiddleware)
 // store middlewares
 let store = new Store({count: 1}, loggerMiddleware, delayMiddleware)
 ```
+
+## Typescript
+
+```ts
+// typescript >= 2.8
+import {Actions, ActionsExclude, action, Store} from 'redux-zero-x'
+
+export interface IState {
+    count: number
+}
+class MyStore extends Store<IState> {
+    private _something() {
+        doSomething()
+    }
+
+    @action
+    add(count: number) {
+        return {count: this.getState().count + 1}
+    }
+}
+export type IMyStore = Actions<MyStore>
+
+
+class MyOtherStore extends Store<IState> {
+    @action
+    add(count: number) {
+        return {count: this.getState().count + 1}
+    }
+
+    @action({fake: true})
+    fakeAction1() {
+        return "welcome"
+    }
+
+    @action({fake: true})
+    fakeAction2() {
+        return "welcome1"
+    }
+}
+
+// exclude some action
+export IMyOtherStore = ActionsExclude<MyOtherStore, "fakeAction1" | "fakeAction2">
+
+```
+
+
 
 ## License
 
