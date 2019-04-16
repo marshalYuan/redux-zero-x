@@ -1,6 +1,7 @@
 import { Store, action, createStore } from "../store"
 import { Actions } from "../types"
 import { getMeta } from "../utils"
+import { ActionsExclude } from "..";
 
 class MyStore extends Store<{count: number}> {
     @action
@@ -23,6 +24,16 @@ class MyStore extends Store<{count: number}> {
         return ({count}) => {
             return {count: count * times}
         }
+    }
+
+    @action({fake: true})
+    fakeAction(message: string) {
+        return "hello, " + message
+    }
+
+    @action({fake: true})
+    fakeActionWithWarn(message: string) {
+        return this.getState()
     }
 }
 
@@ -50,6 +61,16 @@ describe("store", () => {
         let s = new MyStore({count: 0})
         s.getActions().notPureAdd(1)
         expect(s.getState().count).toBe(1)
+    })
+
+    it("fake action", () => {
+        let s = new MyStore({count: 0})
+        console.warn = jest.fn()
+        let actions = s.getActions() as ActionsExclude<typeof s, "fakeAction" | "fakeActionWithWarn">
+        expect(actions.fakeAction("redux-zero-x")).toBe("hello, redux-zero-x")
+
+        actions.fakeActionWithWarn("redux-zero-x")
+        expect((console.warn as any).mock.calls[0][0]).toBe("Method getState can't be called in a fake action")
     })
 
     it("meta", () => {

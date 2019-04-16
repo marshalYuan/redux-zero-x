@@ -20,6 +20,16 @@ export interface IStore<S> {
   getActions: () => any
 }
 
+const fakerWarning = (method: string) => console.warn(`Method ${method} can't be called in a fake action`)
+let fakerGuard = {
+  middleware: () => fakerWarning('middleware'),
+  setState: () => fakerWarning('setState'),
+  subscribe: () => fakerWarning('subscribe'),
+  getState: () => fakerWarning('getState'),
+  actions: () => fakerWarning('actions'),
+  getActions: () => fakerWarning('getActions'),
+}
+
 function getActions<S>(store: IStore<S>) {
   let propertyKeys = getActionNames(store)
   return propertyKeys
@@ -31,7 +41,7 @@ function getActions<S>(store: IStore<S>) {
       meta.pure = isUndefined(meta.pure) ? Store.defaultConfig.pure : !!meta.pure
       let name = meta.name || (meta.name = propertyKey)
       let hasMiddleware = isFunction(store.middleware)
-      actions[name] = (...args) => {
+      let truthyAction = (...args) => {
         if (meta.pure === false) args = [store.getState(), ...args]
         return hasMiddleware
           ? store.middleware(action, () =>
@@ -39,6 +49,12 @@ function getActions<S>(store: IStore<S>) {
             )
           : set(store, store[propertyKey](...args))
       }
+      
+      let fakeAction = (...args) => {
+        return action.apply(fakerGuard, args)
+      }
+
+      actions[name] = meta.fake ? fakeAction : truthyAction
       setMeta(actions[name], meta)
       return actions
     }, {})
